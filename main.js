@@ -37,7 +37,6 @@ Buon lavoro!
 
 */
 
-
 const posts = [
     {
         "id": 1,
@@ -96,9 +95,8 @@ const posts = [
     }
 ];
 
-
 const container = document.querySelector('#container');
-
+const arrId = [];
 
 
 /*
@@ -108,6 +106,9 @@ Prendendo come riferimento il layout di esempio presente nell'html, stampiamo i 
 for (let i =0; i< posts.length; i++) {
     let postCard = document.createElement('div');
     postCard.classList.add('post');
+
+    
+
 
     //// inner structure card html
     postCard.innerHTML = `
@@ -137,7 +138,7 @@ for (let i =0; i< posts.length; i++) {
             <div class="likes js-likes">
 
                 <div class="likes__cta">
-                    <a class="like-button  js-like-button" href="#" data-postid="${posts[i].id}">
+                    <a class="like-button  js-like-button" href="#!" data-postid="${posts[i].id}">
                         <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                         <span class="like-button__label">Mi Piace</span>
                     </a>
@@ -152,29 +153,52 @@ for (let i =0; i< posts.length; i++) {
 
     </div>
     `
+    
     container.append(postCard);
 
-    let arrButton = [...document.querySelectorAll('.like-button')];
+    /*
 
+    Se clicchiamo sul tasto "Mi Piace" cambiamo il colore al testo del bottone e incrementiamo il counter dei likes relativo.
+    Salviamo in un secondo array gli id dei post ai quali abbiamo messo il like.
+
+    */
+
+    let arrButton = [...document.querySelectorAll('.like-button')];
+    let arrCounter = [...document.querySelectorAll('.js-likes-counter')]
+    
     arrButton[i].addEventListener('click', buttonAction);
 
     function buttonAction () {
+
         this.classList.toggle('like-button--liked');
-        console.log(this);
 
+        if (this.classList.contains('like-button--liked')) {
+            arrCounter[i].innerHTML = parseInt(posts[i].likes) + 1;
+
+            if (!arrId.includes(posts[i].id)) {
+                arrId.push(posts[i].id);
+            } 
+
+        } else {
+
+            arrCounter[i].innerHTML = parseInt(posts[i].likes);
+
+        }
+
+        console.log(arrId);
     }
 
-    function count () {
-        
-    }
+
+
+
+
+
+
 }
 
-/*
 
-Se clicchiamo sul tasto "Mi Piace" cambiamo il colore al testo del bottone e incrementiamo il counter dei likes relativo.
-Salviamo in un secondo array gli id dei post ai quali abbiamo messo il like.
 
-*/
+
 
 // console.log(arrButton);
 
