@@ -107,7 +107,7 @@ for (let i =0; i< posts.length; i++) {
     let postCard = document.createElement('div');
     postCard.classList.add('post');
 
-    
+
 
 
     //// inner structure card html
@@ -182,6 +182,8 @@ for (let i =0; i< posts.length; i++) {
         } else {
 
             arrCounter[i].innerHTML = parseInt(posts[i].likes);
+            arrId.splice(posts[i].id);
+
 
         }
 
