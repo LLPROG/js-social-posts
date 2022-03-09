@@ -1,42 +1,4 @@
-/*
-
-Descrizione
-Ricreiamo un feed social aggiungendo al layout di base fornito, il nostro script JS in cui:
-Nel file js avete un array di oggetti che rappresentano ciascun post.
-Ogni post contiene le informazioni necessarie per stampare la relativa card:
-id del post (numero progressivo da 1 a n),
-nome autore,
-foto autore,
-data in formato americano (mm-gg-yyyy),
-testo del post,
-immagine (non tutti i post devono avere una immagine),
-numero di likes.
-
-
-Milestone 1 
-
-Prendendo come riferimento il layout di esempio presente nell'html, stampiamo i post del nostro feed.
-
-
-Milestone 2 
-
-Se clicchiamo sul tasto "Mi Piace" cambiamo il colore al testo del bottone e incrementiamo il counter dei likes relativo.
-Salviamo in un secondo array gli id dei post ai quali abbiamo messo il like.
-
-
-BONUS
-1. Formattare le date in formato italiano (gg/mm/aaaa)
-2. Gestire l'assenza dell'immagine profilo con un elemento di fallback che contiene le iniziali dell'utente (es. Luca Formicola > LF).
-3. Al click su un pulsante "Mi Piace" di un post, se abbiamo già cliccato dobbiamo decrementare il contatore e cambiare il colore del bottone.
-Consigli del giorno:
-Ragioniamo come sempre a step.
-Prima scriviamo nei commenti la logica in italiano e poi traduciamo in codice.
-console.log() è nostro amico (provate anche la variante console.table() per array e oggetti, o ancora meglio con array di oggetti).
-Quando un pezzo di codice funziona, chiediamoci se possiamo scomporlo in funzioni più piccole.
-Buon lavoro!
-
-*/
-
+//// costanti dei post 
 const posts = [
     {
         "id": 1,
@@ -95,113 +57,113 @@ const posts = [
     }
 ];
 
+//// container dove stampare le cardPost
 const container = document.querySelector('#container');
 const arrId = [];
 
 
-/*
-Prendendo come riferimento il layout di esempio presente nell'html, stampiamo i post del nostro feed.
-*/
-
+/// ciclo per ogni post
 for (let i =0; i< posts.length; i++) {
+
+    //// funzione per generare tutti i post
+    render(posts[i]);
+
+    /// sostituzione
+    let arrPostNull = [...document.querySelectorAll('.post-meta__icon')];
+
+    if(posts[i].author.image === null) {
+        let arrIniziali = posts[i].author.name.split('');
+        let arrInizia = [];
+        for (let i =0; i< arrIniziali.length; i++) {
+            if (arrIniziali[i] === arrIniziali[i].toUpperCase()) {
+                arrInizia.push(arrIniziali[i]) 
+                iniziali = arrInizia[0] + arrInizia[2]
+            }
+        }   
+        arrPostNull[i].innerHTML = iniziali
+        // console.log(arrPostNull[i])
+    }
+}
+
+//// funzione per generare tutti i post
+function render (obj) {
     let postCard = document.createElement('div');
     postCard.classList.add('post');
-
-
-
-
-    //// inner structure card html
+    postCard.dataset.postid = obj.id
     postCard.innerHTML = `
-    <div class="post">
-
         <div class="post__header">
 
             <div class="post-meta">                    
                 <div class="post-meta__icon">
-                    <img class="profile-pic" src=${posts[i].author.image} alt="${posts[i].author.name}">                    
+                    <img class="profile-pic" src=${obj.author.image} alt="${obj.author.name}">                    
                 </div>
                 <div class="post-meta__data">
-                    <div class="post-meta__author">${posts[i].author.name}</div>
-                    <div class="post-meta__time">${posts[i].created}</div>
+                    <div class="post-meta__author">${obj.author.name}</div>
+                    <div class="post-meta__time">${obj.created.split('-').reverse().join('/')}</div>
                 </div>                    
             </div>
             
         </div>
 
-        <div class="post__text">${posts[i].content}</div>
+        <div class="post__text">${obj.content}</div>
 
         <div class="post__image">
-            <img src=${posts[i].media} alt="${posts[i].author.name}">
+            <img src=${obj.media} alt="${obj.author.name}">
         </div>
 
         <div class="post__footer">
             <div class="likes js-likes">
 
                 <div class="likes__cta">
-                    <a class="like-button  js-like-button" href="#!" data-postid="${posts[i].id}">
+                    <a class="like-button  js-like-button" href="#" >
                         <i class="like-button__icon fas fa-thumbs-up" aria-hidden="true"></i>
                         <span class="like-button__label">Mi Piace</span>
                     </a>
                 </div>
 
                 <div class="likes__counter">
-                    Piace a <b id="like-counter-1" class="js-likes-counter">${posts[i].likes}</b> persone
+                    Piace a <b id="like-counter-1" class="js-likes-counter">${obj.likes}</b> persone
                 </div>
 
             </div> 
         </div> 
-
-    </div>
     `
-    
+
+    postCard.querySelector('.js-like-button').addEventListener('click', buttonAction);
     container.append(postCard);
+}
 
-    /*
+function buttonAction (event) {
+    event.preventDefault();
+    let btn = this;
+    let postCard = btn.closest('.post');
+    let postId = postCard.dataset.postid;
+    let counter = postCard.querySelector('.js-likes-counter');
+    // console.log(counter);
 
-    Se clicchiamo sul tasto "Mi Piace" cambiamo il colore al testo del bottone e incrementiamo il counter dei likes relativo.
-    Salviamo in un secondo array gli id dei post ai quali abbiamo messo il like.
+    btn.classList.toggle('like-button--liked');
 
-    */
-
-    let arrButton = [...document.querySelectorAll('.like-button')];
-    let arrCounter = [...document.querySelectorAll('.js-likes-counter')]
-    
-    arrButton[i].addEventListener('click', buttonAction);
-
-    function buttonAction () {
-
-        this.classList.toggle('like-button--liked');
-
-        if (this.classList.contains('like-button--liked')) {
-            arrCounter[i].innerHTML = parseInt(posts[i].likes) + 1;
-
-            if (!arrId.includes(posts[i].id)) {
-                arrId.push(posts[i].id);
-            } 
-
-        } else {
-
-            arrCounter[i].innerHTML = parseInt(posts[i].likes);
-            arrId.splice(posts[i].id);
-
-
-        }
-
-        console.log(arrId);
+    //// after cicle the index is the same to the obect of this
+    let indexlikedPost = 0;
+    while (postId != posts[indexlikedPost].id) {
+        indexlikedPost++
     }
 
+    let objPost = posts[indexlikedPost];
 
-
-
-
-
-
+    if (btn.classList.contains('like-button--liked')) {
+        arrId.push(postId);
+        objPost.likes++
+        console.log(arrId);
+    } else {
+        const index = arrId.indexOf(postId);
+        arrId.splice(index, 1);
+        objPost.likes--
+        console.log(arrId);
+    }
+    counter.innerHTML = objPost.likes;
 }
 
 
-
-
-
-// console.log(arrButton);
 
 
